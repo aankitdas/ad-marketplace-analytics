@@ -80,26 +80,22 @@ def show_overview(events, daily, advertisers):
     
     st.markdown("---")
     
-    # Daily revenue chart
+    # Daily revenue chart - using Streamlit native
     st.subheader("Daily Revenue Over Time")
-    fig = px.line(daily, x='day', y='revenue', title='Daily Revenue')
-    fig.add_vrect(x0=30, x1=60, fillcolor="green", opacity=0.1, 
-                  annotation_text="Experiment Period", annotation_position="top left")
-    st.plotly_chart(fig, use_container_width=True)
+    st.caption("📍 Experiment Period: Days 30-60")
+    st.line_chart(daily.set_index('day')['revenue'])
     
     # Two column layout
     col1, col2 = st.columns(2)
     
     with col1:
         st.subheader("Active Advertisers Over Time")
-        fig = px.line(daily, x='day', y='active_advertisers')
-        st.plotly_chart(fig, use_container_width=True)
+        st.line_chart(daily.set_index('day')['active_advertisers'])
     
     with col2:
         st.subheader("Advertiser Verticals")
         vertical_counts = advertisers['vertical'].value_counts()
-        fig = px.pie(values=vertical_counts.values, names=vertical_counts.index)
-        st.plotly_chart(fig, use_container_width=True)
+        st.bar_chart(vertical_counts)
 
 
 def show_experiment(events, daily):
