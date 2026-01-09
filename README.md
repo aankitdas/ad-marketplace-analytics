@@ -22,5 +22,5 @@ End-to-end simulation and analytics platform for mobile advertising marketplaces
 ## Tech Stack
 - Python, Pandas, NumPy
 - XGBoost, scikit-learn
-- Streamlit, Plotly
+- Docker, Streamlit, Plotly
 - Statistical analysis (scipy, statsmodels)
