@@ -40,11 +40,11 @@ def main():
     # Load data
     events, daily, advertisers = load_data()
     
-    #DEBUG
-    st.write("Events shape:", events.shape)
-    st.write("Events columns:", list(events.columns))
-    st.write("Daily shape:", daily.shape)
-    st.write("First row of daily:", daily.head(1))
+    # #DEBUG
+    # st.write("Events shape:", events.shape)
+    # st.write("Events columns:", list(events.columns))
+    # st.write("Daily shape:", daily.shape)
+    # st.write("First row of daily:", daily.head(1))
 
     # Sidebar
     st.sidebar.header("Navigation")
@@ -145,20 +145,20 @@ def show_experiment(events, daily):
     with col2:
         st.metric("P-Value", f"{p_value:.4f}", delta="Significant!" if p_value < 0.05 else "Not Significant")
     
-    # Comparison chart
+    # Revenue Distribution - using native histogram
+    # Revenue Distribution - combined bar chart
     st.subheader("Revenue Distribution: Treatment vs Control")
-    fig = go.Figure()
-    fig.add_trace(go.Histogram(x=treatment['price_paid'], name='Treatment', opacity=0.7))
-    fig.add_trace(go.Histogram(x=control['price_paid'], name='Control', opacity=0.7))
-    fig.update_layout(barmode='overlay', xaxis_title='Price Paid', yaxis_title='Count')
-    st.plotly_chart(fig, use_container_width=True)
+    
+    comparison_data = pd.DataFrame({
+        'Total Revenue': [treatment['price_paid'].sum(), control['price_paid'].sum()],
+        'Total Clicks': [treatment['clicked'].sum(), control['clicked'].sum()],
+    }, index=['Treatment', 'Control'])
+    st.bar_chart(comparison_data)
     
     # Daily comparison during experiment
     st.subheader("Daily Revenue by Group (During Experiment)")
-    exp_daily = exp_data.groupby(['day', 'group'])['price_paid'].sum().reset_index()
-    fig = px.line(exp_daily, x='day', y='price_paid', color='group', 
-                  title='Daily Revenue: Treatment vs Control')
-    st.plotly_chart(fig, use_container_width=True)
+    exp_daily = exp_data.groupby(['day', 'group'])['price_paid'].sum().unstack()
+    st.line_chart(exp_daily)
 
 
 def show_churn(advertisers, events):
@@ -183,29 +183,25 @@ def show_churn(advertisers, events):
     
     with col1:
         st.subheader("Churn Rate by Vertical")
-        churn_by_vertical = advertisers.groupby('vertical')['is_churned'].mean().sort_values(ascending=False)
-        fig = px.bar(x=churn_by_vertical.index, y=churn_by_vertical.values * 100,
-                     labels={'x': 'Vertical', 'y': 'Churn Rate (%)'})
-        st.plotly_chart(fig, use_container_width=True)
+        churn_by_vertical = advertisers.groupby('vertical')['is_churned'].mean().sort_values(ascending=False) * 100
+        st.bar_chart(churn_by_vertical)
     
     with col2:
         st.subheader("Churn by Budget Tier")
-        advertisers['budget_tier'] = pd.cut(
-            advertisers['daily_budget'], 
+        advertisers_copy = advertisers.copy()
+        advertisers_copy['budget_tier'] = pd.cut(
+            advertisers_copy['daily_budget'], 
             bins=[0, 100, 500, 1000, float('inf')],
             labels=['$0-100', '$100-500', '$500-1000', '$1000+']
         )
-        churn_by_budget = advertisers.groupby('budget_tier')['is_churned'].mean()
-        fig = px.bar(x=churn_by_budget.index.astype(str), y=churn_by_budget.values * 100,
-                     labels={'x': 'Budget Tier', 'y': 'Churn Rate (%)'})
-        st.plotly_chart(fig, use_container_width=True)
+        churn_by_budget = advertisers_copy.groupby('budget_tier')['is_churned'].mean() * 100
+        st.bar_chart(churn_by_budget)
     
     # Churn timing
     st.subheader("When Do Advertisers Churn?")
     churn_days = churned['churn_day'].dropna()
-    fig = px.histogram(churn_days, nbins=30, title='Distribution of Churn Day')
-    fig.update_layout(xaxis_title='Day', yaxis_title='Number of Churns')
-    st.plotly_chart(fig, use_container_width=True)
+    churn_counts = churn_days.value_counts().sort_index()
+    st.bar_chart(churn_counts)
     
     # Feature importance (simplified)
     st.subheader("Churn Prediction Model")
