@@ -39,6 +39,12 @@ def main():
     # Load data
     events, daily, advertisers = load_data()
     
+    #DEBUG
+    st.write("Events shape:", events.shape)
+    st.write("Events columns:", list(events.columns))
+    st.write("Daily shape:", daily.shape)
+    st.write("First row of daily:", daily.head(1))
+
     # Sidebar
     st.sidebar.header("Navigation")
     page = st.sidebar.radio(
