@@ -1,0 +1,22 @@
+name: Sync to Hugging Face hub
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to Hugging Face Space
+        env:
+          AD_TOKEN: ${{ secrets.AD_TOKEN }}
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git push https://aankitdas:${AD_TOKEN}@huggingface.co/spaces/aankitdas/ad-marketplace-analytics main --force
