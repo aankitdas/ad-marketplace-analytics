@@ -8,24 +8,25 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os, sys
-sys.path.append('src')
 
-import os
 st.set_page_config(
     page_title="Ad Marketplace Analytics",
     page_icon="📊",
     layout="wide"
 )
 
-
-st.write("Current directory:", os.getcwd())
-st.write("Files in current directory:", os.listdir('.'))
-st.write("Data folder exists:", os.path.exists('data'))
-if os.path.exists('data'):
-    st.write("Files in data/:", os.listdir('data'))
+sys.path.append('src')
 
 
-@st.cache_data
+
+# st.write("Current directory:", os.getcwd())
+# st.write("Files in current directory:", os.listdir('.'))
+# st.write("Data folder exists:", os.path.exists('data'))
+# if os.path.exists('data'):
+#     st.write("Files in data/:", os.listdir('data'))
+
+
+
 def load_data():
     events = pd.read_csv('data/events.csv')
     daily = pd.read_csv('data/daily_metrics.csv')
