@@ -9,8 +9,8 @@ RUN pip install uv
 COPY pyproject.toml .
 COPY uv.lock* .
 
-# Install dependencies
-RUN uv sync --frozen --no-dev
+# Install dependencies with uv
+RUN uv pip install --system numpy pandas scikit-learn xgboost streamlit plotly scipy pyarrow statsmodels
 
 # Copy application code
 COPY . .
@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 8501
 
 # Run the app
-CMD ["uv", "run", "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
