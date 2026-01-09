@@ -11,17 +11,19 @@ import os, sys
 sys.path.append('src')
 
 import os
+st.set_page_config(
+    page_title="Ad Marketplace Analytics",
+    page_icon="📊",
+    layout="wide"
+)
+
+
 st.write("Current directory:", os.getcwd())
 st.write("Files in current directory:", os.listdir('.'))
 st.write("Data folder exists:", os.path.exists('data'))
 if os.path.exists('data'):
     st.write("Files in data/:", os.listdir('data'))
 
-st.set_page_config(
-    page_title="Ad Marketplace Analytics",
-    page_icon="📊",
-    layout="wide"
-)
 
 @st.cache_data
 def load_data():
