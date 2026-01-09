@@ -176,7 +176,7 @@ if __name__ == '__main__':
     import time
     start = time.time()
     sim = FullMarketplaceSimulator(seed=42)
-    results = sim.run(n_advertisers=500, n_days=120, impressions_per_day=5000)
+    results = sim.run(n_advertisers=200, n_days=90, impressions_per_day=1000)
     elapsed = time.time() - start
     print(f"\n=== TIMING ===")
     print(f"Simulation took {elapsed:.1f} seconds ({elapsed/60:.1f} minutes)")
@@ -214,7 +214,7 @@ if __name__ == '__main__':
 
     # Save data for analysis
     print(f"\n=== SAVING DATA ===")
-    events.to_parquet('data/events.parquet', index=False)
-    daily.to_parquet('data/daily_metrics.parquet', index=False)
-    advertisers.to_parquet('data/advertisers.parquet', index=False)
+    events.to_csv('data/events.csv', index=False)
+    daily.to_csv('data/daily_metrics.csv', index=False)
+    advertisers.to_csv('data/advertisers.csv', index=False)
     print("Saved to data/ folder")

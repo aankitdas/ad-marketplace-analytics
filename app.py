@@ -18,30 +18,10 @@ st.set_page_config(
 
 @st.cache_data
 def load_data():
-    # Check if data exists
-    if not os.path.exists('data/events.parquet'):
-        st.warning("Generating data... this takes ~2 minutes on first run")
-        generate_data()
-    
-    events = pd.read_parquet('data/events.parquet')
-    daily = pd.read_parquet('data/daily_metrics.parquet')
-    advertisers = pd.read_parquet('data/advertisers.parquet')
+    events = pd.read_csv('data/events.csv')
+    daily = pd.read_csv('data/daily_metrics.csv')
+    advertisers = pd.read_csv('data/advertisers.csv')
     return events, daily, advertisers
-
-def generate_data():
-    """Generate simulation data if it doesn't exist."""
-    import sys
-    sys.path.append('src/simulation')
-    from full_simulation import FullMarketplaceSimulator
-    
-    os.makedirs('data', exist_ok=True)
-    
-    sim = FullMarketplaceSimulator(seed=42)
-    results = sim.run(n_advertisers=200, n_days=90, impressions_per_day=5000)
-    
-    results['events'].to_parquet('data/events.parquet', index=False)
-    results['daily_metrics'].to_parquet('data/daily_metrics.parquet', index=False)
-    results['advertisers'].to_parquet('data/advertisers.parquet', index=False)
 
 def main():
     st.title("📊 Ad Marketplace Analytics Platform")
